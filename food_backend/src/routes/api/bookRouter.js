@@ -1,6 +1,7 @@
 const express = require('express')
 const BookRouter = express.Router()
 const book = require('../../model/bookData')
+const login=require('../../model/loginData')
 const checkAuth = require("../../middleware/check-auth")
 
 
@@ -21,48 +22,36 @@ BookRouter.post('/add-book', checkAuth, (req, res) => {
 })
 
 BookRouter.get('/view-book', (req, res) => {
-    book.find()
-        .then(function (data) {
-            if (data == 0) {
-                return res.status(401).json({
-                    success: false,
-                    error: true,
-                    message: "No Item Found!"
-                })
-            }
-            else {
-                return res.status(200).json({
-                    success: true,
-                    error: false,
-                    data: data
-                })
-            }
+    login.aggregate([
+        {
+            $lookup:
+            {
+                from:'register_tbs',
+                localField:'_id',
+                foreignField:'login_id',
+                as:'registerData'
+            }               
+        },
+        {
+        $lookup:
+            {
+                from:'book_tbs',
+                localField:'_id',
+                foreignField:'login_id',
+                as:'BookData' 
+            }  
+        }
+    ]).then(function(data){
+            
+        res.status(200).json({
+            success:true,
+            error:false,
+            details:data
         })
+    })
 
 })
 
-BookRouter.get('/view-user-books', checkAuth, (req, res) => {
-    var id = req.userData.userId
-   
-    book.find()
-        .then(function (data) {
-            if (data == 0) {
-                return res.status(401).json({
-                    success: false,
-                    error: true,
-                    message: "No Item Found!"
-                })
-            }
-            else {
-                return res.status(200).json({
-                    success: true,
-                    error: false,
-                    data: data
-                })
-            }
-        })
-
-})
 
 
 BookRouter.get('/view-user-book', checkAuth, (req, res) => {

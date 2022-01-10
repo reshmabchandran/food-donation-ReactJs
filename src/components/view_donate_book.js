@@ -68,7 +68,7 @@ export default class view_donate_book extends Component {
        if(response.data.success==true)
        {
            this.setState({
-               arrOfData:response.data.data
+               arrOfData:response.data.details
            })
 
            console.log("book dataaaa",this.state.arrOfData)
@@ -160,13 +160,22 @@ export default class view_donate_book extends Component {
   {/* <div class="card-header">
     Featured
   </div> */}
+  {/* {(item.BookData.length===0) */}
   <div class="card-body">
-    <h4 class="card-title" key={i}>{item.category}</h4>
-    <h5 class="card-title" key={i}>{item.language}</h5>
-    <p class="card-text" key={i}>{item.waste_type}</p>
-    <p class="card-text">{item.gender}</p>
-    <div>
+  <h4 class="card-title" key={i}>{item.username}</h4>
+ 
+  {item.BookData.map((item1,i)=>{
+  
+  return <>
+  <h4 class="card-title" key={i}>{item1.category}</h4>
+    <h5 class="card-title" key={i}>{item1.language}</h5>
+    {/* <p class="card-text" key={i}>{item.waste_type}</p>
+    <p class="card-text">{item.gender}</p> */}
+    </>
     
+  })}
+    
+    <div>
       {item.status==="1"?<h5 style={{color:"green"}}>Item Collected</h5>:null}
     <a onClick={()=>this.DeleteBook(item._id)} class="btn" style={{backgroundColor:'#0898c4',color:'white'}}>Delete</a>&emsp;&emsp;
     {/* <a onClick={()=>this.MoveToEdit(item._id)} class="btn" style={{backgroundColor:'#0898c4',color:'white'}}>Edit</a> */}

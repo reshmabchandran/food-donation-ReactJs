@@ -1,6 +1,7 @@
 const express = require('express')
 const ItemRouter = express.Router()
 const food = require('../../model/foodData')
+const login = require('../../model/loginData')
 const checkAuth = require("../../middleware/check-auth")
 
 
@@ -24,24 +25,51 @@ ItemRouter.post('/add-food', checkAuth, (req, res) => {
 
 ItemRouter.get('/view-food', (req, res) => {
 
-    food.find()
-        .then(function (data) {
-            if (data == 0) {
-                return res.status(401).json({
-                    success: false,
-                    error: true,
-                    message: "No Food Item Found!"
-                })
-            }
-            else {
-                return res.status(200).json({
-                    success: true,
-                    error: false,
-                    data: data,
+    // food.find()
+    //     .then(function (data) {
+    //         if (data == 0) {
+    //             return res.status(401).json({
+    //                 success: false,
+    //                 error: true,
+    //                 message: "No Food Item Found!"
+    //             })
+    //         }
+    //         else {
+    //             return res.status(200).json({
+    //                 success: true,
+    //                 error: false,
+    //                 data: data,
                     
-                })
-            }
+    //             })
+    //         }
+    //     })
+
+    login.aggregate([
+        {
+            $lookup:
+            {
+                from:'register_tbs',
+                localField:'_id',
+                foreignField:'login_id',
+                as:'registerData'
+            }               
+        },
+        {
+        $lookup:
+            {
+                from:'food_tbs',
+                localField:'_id',
+                foreignField:'login_id',
+                as:'foodData' 
+            }  
+        }
+    ]).then(function(data){
+        res.status(200).json({
+            success:true,
+            error:false,
+            details:data
         })
+    })
     })
 
 ItemRouter.get('/view-user-food', checkAuth, (req, res) => {
