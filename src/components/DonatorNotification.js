@@ -81,8 +81,8 @@ headers: {
           <div style={{height:500,}}>
           <Donatornav/>
          {this.state.arrOfData.map((item,i)=> { 
-         
-         return <div style={{width:"100%",paddingLeft:60,padding:45,}}>
+         if(item.clothData.length||item.foodData.length||item.foodData.length){
+         return (<div style={{width:"100%",paddingLeft:60,padding:45,}}>
           <div class="card" style={{borderWidth:2,borderRadius:12,backgroundColor:'white',width:"75%"}}>
 <div class="card-body">
 <h5 class="card-title" key={i}></h5>
@@ -114,7 +114,7 @@ headers: {
 </div>
 </div>
 
-      </div>})}  
+      </div>)}})}  
                     
       </div>
         );

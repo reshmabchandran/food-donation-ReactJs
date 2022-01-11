@@ -1,6 +1,7 @@
 const express = require('express')
 const ClothRouter = express.Router()
 const cloth = require('../../model/clothData')
+const login=require('../../model/loginData')
 const checkAuth = require("../../middleware/check-auth")
 
 
@@ -22,25 +23,54 @@ ClothRouter.post('/add-cloth', checkAuth, (req, res) => {
 })
 
 ClothRouter.get('/view-cloth', (req, res) => {
-    cloth.find()
-        .then(function (data) {
-            if (data == 0) {
-                return res.status(401).json({
-                    success: false,
-                    error: true,
-                    message: "No Item Found!"
-                })
-            }
-            else {
-                return res.status(200).json({
-                    success: true,
-                    error: false,
-                    data: data
-                })
-            }
-        })
+//     cloth.find()
+//         .then(function (data) {
+//             if (data == 0) {
+//                 return res.status(401).json({
+//                     success: false,
+//                     error: true,
+//                     message: "No Item Found!"
+//                 })
+//             }
+//             else {
+//                 return res.status(200).json({
+//                     success: true,
+//                     error: false,
+//                     data: data
+//                 })
+//             }
+//         })
 
+// })
+
+login.aggregate([
+    {
+        $lookup:
+        {
+            from:'register_tbs',
+            localField:'_id',
+            foreignField:'login_id',
+            as:'registerData'
+        }               
+    },
+    {
+    $lookup:
+        {
+            from:'cloth_tbs',
+            localField:'_id',
+            foreignField:'login_id',
+            as:'clothData' 
+        }  
+    }
+]).then(function(data){
+    res.status(200).json({
+        success:true,
+        error:false,
+        details:data
+    })
 })
+})
+
 
 ClothRouter.get('/view-user-cloth', checkAuth, (req, res) => {
     //var id = req.userData.userId
